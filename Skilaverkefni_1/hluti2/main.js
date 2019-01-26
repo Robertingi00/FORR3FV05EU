@@ -7,7 +7,6 @@ console.log(windowHeight)
 const main_div = document.getElementById('main')
 
 const beginX = windowWidth/3;
-
 const poles =  [];
 const rings = [];
 
@@ -24,18 +23,22 @@ const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-function Pole(x, y, width, height, color='#000000') {
+function Pole(x, y, width, height, color='#000000', stacks=0) {
 	var rect = document.createElementNS(svgNS,'rect');
-    rect.setAttribute('x',x-(width/2)-350);
+    rect.setAttribute('x',x-(width/2)-(beginX/2));
     rect.setAttribute('y',y);
     rect.setAttribute('width',width);
     rect.setAttribute('height',height);
     rect.setAttribute('fill',color);
     svg.appendChild(rect);
-    rect.dataset.stack = 0;
+    if(stacks == 1){
+    	rect.dataset.stack = 4;
+    }else{
+    	rect.dataset.stack = 1;
+    }
 
     var rect2 = document.createElementNS(svgNS,'rect');
-    rect2.setAttribute('x',x-350);
+    rect2.setAttribute('x',x-5 -(beginX/2));
     rect2.setAttribute('y',y-300);
     rect2.setAttribute('width',10);
     rect2.setAttribute('height',300);
@@ -49,7 +52,7 @@ function Pole(x, y, width, height, color='#000000') {
 
 for(i = 1; i <= 3; i++){
 
-	Pole(beginX * i, 500, 200,10);
+	Pole(beginX * i, 500, 200,10,'#000000',i);
 }
 
 main_div.appendChild(svg)
@@ -57,11 +60,12 @@ main_div.appendChild(svg)
 
 function Ring(x, y, width, height, color='#000000') {
 	var ring = document.createElementNS(svgNS,'rect');
-    ring.setAttribute('x',x-(width/2)-350);
+    ring.setAttribute('x',x-(width/2)-(beginX/2));
     ring.setAttribute('y',y);
     ring.setAttribute('width',width);
     ring.setAttribute('height',height);
     ring.setAttribute('fill',color);
+    ring.dataset.before = "0";
     svg.appendChild(ring);
     rings.push(ring);
 }
@@ -73,7 +77,13 @@ for(i = 1; i <= 3; i++){
 
 
 function move(from, to) {
+	console.log(to.dataset.stack);
+	from.x.baseVal.value = to.x.baseVal.value - (from.width.baseVal.value-200)/2;
+	from.y.baseVal.value = 500 -(20 * to.dataset.stack );
+	poles[from.dataset.before].dataset.stack --;
+	to.dataset.stack ++;
+	from.dataset.before = from.id;
 
-	from.x.baseVal.value = to.x.baseVal.value - (from.width.baseVal.value/12);
+
 
 }
